@@ -197,6 +197,9 @@ private slots:
     void iqFftTimeout();
     void audioFftTimeout();
 
+    /* tray icon raises window */
+    void toggleWindow(QSystemTrayIcon::ActivationReason r);
+
 };
 
 #endif // MAINWINDOW_H

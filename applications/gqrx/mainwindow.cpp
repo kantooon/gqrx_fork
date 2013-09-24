@@ -292,7 +292,7 @@ void MainWindow::createTrayIcon()
     icon.addPixmap(px, QIcon::Normal, QIcon::Off);
     _trayIcon->setIcon(icon);
 
-    connect(_trayIcon,SIGNAL(messageClicked()),this,SLOT(raise()));
+    connect(_trayIcon,SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this,SLOT(toggleWindow(QSystemTrayIcon::ActivationReason)));
 
     _trayIcon->setToolTip("Gqrx");
     // fix for Linux by Mihailo Milenkovic
@@ -312,13 +312,30 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (_trayIcon->isVisible())
     {
+        /*
          QMessageBox::information(this, tr("Systray"),
                                   tr("The program will keep running in the "
                                      "system tray. To terminate the program, "
                                      "choose <b>Quit</b> in the context menu "
                                      "of the system tray entry."));
+                                     */
          hide();
          event->ignore();
+    }
+}
+
+/**
+ * @brief show window on tray icon clicked()
+ */
+void MainWindow::toggleWindow(QSystemTrayIcon::ActivationReason r)
+{
+    if((r== QSystemTrayIcon::DoubleClick) && this->isVisible())
+    {
+        hide();
+    }
+    else if ((r== QSystemTrayIcon::DoubleClick) && (!this->isVisible()))
+    {
+        this->showNormal();
     }
 }
 
