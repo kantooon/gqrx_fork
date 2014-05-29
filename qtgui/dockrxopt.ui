@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
-    <height>0</height>
+    <width>230</width>
+    <height>281</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -302,7 +302,7 @@ This is an offset from the hardware RF frequency.&lt;/p&gt;&lt;/body&gt;&lt;/htm
          <string>Demodulator type (mode)</string>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <item>
          <property name="text">
@@ -352,6 +352,16 @@ This is an offset from the hardware RF frequency.&lt;/p&gt;&lt;/body&gt;&lt;/htm
         <item>
          <property name="text">
           <string>CW-U</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>QPSK</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>DSD</string>
          </property>
         </item>
        </widget>

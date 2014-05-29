@@ -152,7 +152,7 @@ int  DockRxOpt::currentFilter()
  */
 void DockRxOpt::setCurrentDemod(int demod)
 {
-    if ((demod >= MODE_OFF) && (demod <= MODE_CWU))
+    if ((demod >= MODE_OFF) && (demod <= MODE_QPSK))
         ui->modeSelector->setCurrentIndex(demod);
 }
 

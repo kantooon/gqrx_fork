@@ -753,6 +753,24 @@ receiver::status receiver::set_demod(rx_demod demod)
         rx->set_demod(nbrx::NBRX_DEMOD_SSB);
         break;
 
+    case RX_DEMOD_QPSK:
+        if ((d_demod == RX_DEMOD_OFF) || wide_fm)
+        {
+            tb->disconnect_all();
+            connect_all(RX_CHAIN_NBRX);
+        }
+        rx->set_demod(nbrx::NBRX_DEMOD_QPSK);
+        break;
+
+    case RX_DEMOD_DSD:
+        if ((d_demod == RX_DEMOD_OFF) || wide_fm)
+        {
+            tb->disconnect_all();
+            connect_all(RX_CHAIN_NBRX);
+        }
+        rx->set_demod(nbrx::NBRX_DEMOD_DSD);
+        break;
+
     default:
         ret = STATUS_ERROR;
         break;

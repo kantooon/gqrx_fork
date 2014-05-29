@@ -110,7 +110,10 @@ SOURCES += \
     qtgui/qtcolorpicker.cpp \
     receivers/nbrx.cpp \
     receivers/receiver_base.cpp \
-    receivers/wfmrx.cpp
+    receivers/wfmrx.cpp \
+    dsp/rx_demod_qpsk.cpp \
+    dsp/qpsk_to_audio.cpp \
+    dsp/shoutstreamer.cpp
 
 HEADERS += \
     applications/gqrx/mainwindow.h \
@@ -150,7 +153,10 @@ HEADERS += \
     qtgui/qtcolorpicker.h \
     receivers/nbrx.h \
     receivers/receiver_base.h \
-    receivers/wfmrx.h
+    receivers/wfmrx.h \
+    dsp/rx_demod_qpsk.h \
+    dsp/qpsk_to_audio.h \
+    dsp/shoutstreamer.h
 
 FORMS += \
     applications/gqrx/mainwindow.ui \
@@ -199,10 +205,18 @@ unix:!macx {
                  gnuradio-blocks \
                  gnuradio-filter \
                  gnuradio-fft \
-                 gnuradio-osmosdr
+                 gnuradio-osmosdr \
+                 gnuradio-digital
 
     LIBS += -lboost_system$$BOOST_SUFFIX -lboost_program_options$$BOOST_SUFFIX
     LIBS += -lrt  # need to include on some distros
+    LIBS += -lgr-dsd
+    LIBS += -losmocore
+    LIBS += -lshout
+    DEPENDPATH += $$PWD/../../osmo-tetra/src
+    LIBS += -L$$PWD/../../osmo-tetra/src -losmo-tetra-phy -L$$PWD/../../osmo-tetra/src -losmo-tetra-mac
+    INCLUDEPATH += $$PWD/../../osmo-tetra/src
+
 }
 
 macx {

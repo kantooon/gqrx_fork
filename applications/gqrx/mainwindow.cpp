@@ -921,6 +921,50 @@ void MainWindow::selectDemod(int index)
         }
         break;
 
+    case DockRxOpt::MODE_QPSK:
+        rx->set_demod(receiver::RX_DEMOD_QPSK);
+        ui->plotter->setDemodRanges(0, 5000, 100, 10000, false);
+        uiDockAudio->setFftRange(0,2000);
+        click_res = 100;
+        switch (filter_preset)
+        {
+        case 0: //wide
+            flo = -15000;
+            fhi = 15000;
+            break;
+        case 2: // narrow
+            flo = -15000;
+            fhi = 15000;
+            break;
+        default: // normal
+            flo = -15000;
+            fhi = 15000;
+            break;
+        }
+        break;
+
+    case DockRxOpt::MODE_DSD:
+        rx->set_demod(receiver::RX_DEMOD_DSD);
+        ui->plotter->setDemodRanges(0, 5000, 100, 10000, false);
+        uiDockAudio->setFftRange(0,15000);
+        click_res = 100;
+        switch (filter_preset)
+        {
+        case 0: //wide
+            flo = -5000;
+            fhi = 5000;
+            break;
+        case 2: // narrow
+            flo = -5000;
+            fhi = 5000;
+            break;
+        default: // normal
+            flo = -5000;
+            fhi = 5000;
+            break;
+        }
+        break;
+
     default:
         qDebug() << "Unsupported mode selection: " << index;
         flo = -5000;
