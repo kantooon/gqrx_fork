@@ -30,15 +30,16 @@ public:
     rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float gain_mu, float mu, double omega_relative_limit, float quad_rate);
     void set_input_rate(float quad_rate);
 private:
+    double _omega_relative_limit;
     float _sample_rate;
-    int _samples_per_symbol = 10;
-    float _excess_bw = 0.35;
-    bool _gray_code = true;
+    int _samples_per_symbol;
+    float _excess_bw;
+    bool _gray_code;
 
-    float _costas_alpha = 0.15;
-    float _gain_mu = 0.0;
-    float _mu = 0.5;
-    double _omega_relative_limit = 0.005;
+    float _costas_alpha;
+    float _gain_mu;
+    float _mu;
+
 
     gr::filter::pfb_decimator_ccf::sptr resamp;
     gr::blocks::multiply_const_cc::sptr pre_scaler;

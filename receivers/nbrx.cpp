@@ -226,7 +226,6 @@ void nbrx::set_demod(int rx_demod)
         disconnect(filter_qpsk, 0, sql, 0);
         disconnect(filter_qpsk, 0, meter, 0);
         disconnect(sql, 0, demod_qpsk, 0);
-        //disconnect(agc, 0, demod_qpsk, 0);
         disconnect(demod_qpsk, 0, self(), 0);
         disconnect(demod_qpsk, 0, self(), 1);
         connect(iq_resamp, 0, nb, 0);
