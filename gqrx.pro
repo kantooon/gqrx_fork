@@ -213,9 +213,9 @@ unix:!macx {
     LIBS += -lgr-dsd
     LIBS += -losmocore
     LIBS += -lshout
-    DEPENDPATH += $$PWD/../../osmo-tetra/src
-    LIBS += -L$$PWD/../../osmo-tetra/src -losmo-tetra-phy -L$$PWD/../../osmo-tetra/src -losmo-tetra-mac
-    INCLUDEPATH += $$PWD/../../osmo-tetra/src
+    DEPENDPATH += $$PWD/../../c++/osmo-tetra/src
+    LIBS += -L$$PWD/../../c++/osmo-tetra/src -losmo-tetra-phy -L$$PWD/../../c++/osmo-tetra/src -losmo-tetra-mac
+    INCLUDEPATH += $$PWD/../../c++/osmo-tetra/src
 
 }
 

@@ -2,9 +2,9 @@
 
 
 
-rx_demod_qpsk_sptr make_rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float gain_mu, float mu, double omega_relative_limit)
+rx_demod_qpsk_sptr make_rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float gain_mu, float mu, double omega_relative_limit, float quad_rate)
 {
-    return gnuradio::get_initial_sptr(new rx_demod_qpsk(sps, excess_bw, costas_alpha, gain_mu, mu, omega_relative_limit));
+    return gnuradio::get_initial_sptr(new rx_demod_qpsk(sps, excess_bw, costas_alpha, gain_mu, mu, omega_relative_limit, quad_rate));
 }
 
 static const int MIN_IN = 1;  /* Mininum number of input streams. */
@@ -12,7 +12,7 @@ static const int MAX_IN = 1;  /* Maximum number of input streams. */
 static const int MIN_OUT = 1; /* Minimum number of output streams. */
 static const int MAX_OUT = 1; /* Maximum number of output streams. */
 
-rx_demod_qpsk::rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float gain_mu, float mu, double omega_relative_limit)
+rx_demod_qpsk::rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float gain_mu, float mu, double omega_relative_limit, float quad_rate)
       : gr::hier_block2 ("rx_demod_qpsk",
                         gr::io_signature::make (MIN_IN, MAX_IN, sizeof (gr_complex)),
                         gr::io_signature::make (MIN_OUT, MAX_OUT, sizeof (float))),
@@ -22,7 +22,7 @@ rx_demod_qpsk::rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float
         _gain_mu(gain_mu),
         _mu(mu),
         _omega_relative_limit(omega_relative_limit),
-        _sample_rate(90000.0)
+        _sample_rate(quad_rate)
 {
 
     int symbol_rate = 18000;
@@ -38,7 +38,7 @@ rx_demod_qpsk::rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float
     //resamp = gr::filter::pfb_decimator_ccf::make((int)rerate,rerate_taps,0);
     resampler_cc = make_resampler_cc(rerate);
     int arity = 4;
-    double scale = (1.0/16384.0);
+    float scale = (1.0/16384.0);
     pre_scaler = gr::blocks::multiply_const_cc::make(scale);   // scale the signal from full-range to +-1
 
     agc = gr::analog::feedforward_agc_cc::make(16, 2.0);
@@ -47,8 +47,9 @@ rx_demod_qpsk::rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float
     int ntaps = 11 * _samples_per_symbol;
     std::vector<float> rrc_taps = gr::filter::firdes::root_raised_cosine(
                 1.0,                      // gain
-                _samples_per_symbol, // sampling rate
-                1.0,                      // symbol rate
+                _sample_rate,
+                symbol_rate, // sampling rate
+                //1.0,                      // symbol rate
                 _excess_bw,          // excess bandwidth (roll-off factor)
                 ntaps);
     rrc_filter = gr::filter::interp_fir_filter_ccf::make(1, rrc_taps);
@@ -60,8 +61,8 @@ rx_demod_qpsk::rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float
     }
 
     int omega = _samples_per_symbol;
-    double gain_omega = .25 * _gain_mu * _gain_mu;
-    //double _costas_beta  = 0.25 * _costas_alpha * _costas_alpha;
+    double gain_omega = 0.25 * _gain_mu * _gain_mu;
+    double costas_beta  = 0.25 * _costas_alpha * _costas_alpha;
     float fmin = -0.025;
     float fmax = 0.025;
 
@@ -71,6 +72,8 @@ rx_demod_qpsk::rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float
                   _mu, _gain_mu,
                   omega, gain_omega,
                   _omega_relative_limit);
+    receiver->set_alpha(_costas_alpha);
+    receiver->set_beta(costas_beta);
 
     // Perform Differential decoding on the constellation
     diffdec = gr::digital::diff_phasor_cc::make();

@@ -23,7 +23,7 @@ typedef boost::shared_ptr<qpsk_to_audio> qpsk_to_audio_sptr;
 
 qpsk_to_audio_sptr make_qpsk_to_audio();
 
-class qpsk_to_audio : public gr::sync_interpolator
+class qpsk_to_audio : public gr::sync_block
 {
 public:
     qpsk_to_audio();
@@ -34,6 +34,7 @@ public:
            gr_vector_void_star &output_items);
 
 private:
+    void *tetra_tall_ctx;
     struct tetra_rx_state *trs;
     struct tetra_mac_state *tms;
 };

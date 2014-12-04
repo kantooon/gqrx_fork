@@ -22,12 +22,12 @@
 class rx_demod_qpsk;
 typedef boost::shared_ptr<rx_demod_qpsk> rx_demod_qpsk_sptr;
 
-rx_demod_qpsk_sptr make_rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float gain_mu, float mu, double omega_relative_limit);
+rx_demod_qpsk_sptr make_rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float gain_mu, float mu, double omega_relative_limit, float quad_rate);
 
 class rx_demod_qpsk : public gr::hier_block2
 {
 public:
-    rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float gain_mu, float mu, double omega_relative_limit);
+    rx_demod_qpsk(int sps, float excess_bw, float costas_alpha, float gain_mu, float mu, double omega_relative_limit, float quad_rate);
     void set_input_rate(float quad_rate);
 private:
     float _sample_rate;

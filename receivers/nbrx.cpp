@@ -40,18 +40,18 @@ nbrx::nbrx(float quad_rate, float audio_rate)
       d_demod(NBRX_DEMOD_FM)
 {
     iq_resamp = make_resampler_cc(PREF_QUAD_RATE/d_quad_rate);
-    iq_resamp_qpsk = make_resampler_cc(PREF_QUAD_RATE/d_quad_rate);
+    iq_resamp_qpsk = make_resampler_cc(QPSK_QUAD_RATE/d_quad_rate);
 
     nb = make_rx_nb_cc(PREF_QUAD_RATE, 3.3, 2.5);
     filter = make_rx_filter(PREF_QUAD_RATE, -5000.0, 5000.0, 1000.0);
-    filter_qpsk = make_rx_filter(PREF_QUAD_RATE, -15000.0, 15000.0, 1000.0);
+    filter_qpsk = make_rx_filter(QPSK_QUAD_RATE, -12500.0, 12500.0, 1000.0);
     agc = make_rx_agc_cc(PREF_QUAD_RATE, true, -100, 0, 2, 100, false);
     sql = gr::analog::simple_squelch_cc::make(-150.0, 0.001);
     meter = make_rx_meter_c(DETECTOR_TYPE_RMS);
     demod_ssb = gr::blocks::complex_to_real::make(1);
     demod_fm = make_rx_demod_fm(PREF_QUAD_RATE, PREF_AUDIO_RATE, 5000.0, 75.0e-6);
     demod_am = make_rx_demod_am(PREF_QUAD_RATE, PREF_AUDIO_RATE, true);
-    demod_qpsk = make_rx_demod_qpsk(2,0.35,0.03,0.05,0.05,0.05);
+    demod_qpsk = make_rx_demod_qpsk(2,0.75,0.03,0.05,0.05,0.05, QPSK_QUAD_RATE);
     audio_rr = make_resampler_ff(d_audio_rate/PREF_AUDIO_RATE);
     audio_rr_dsd = make_resampler_ff(PREF_AUDIO_RATE/8000);
     dsd = dsd_make_block_ff();
@@ -102,9 +102,10 @@ void nbrx::set_quad_rate(float quad_rate)
         d_quad_rate = quad_rate;
         lock();
         iq_resamp->set_rate(PREF_QUAD_RATE/d_quad_rate);
+        //FIXME: leaks like a sieve
+        iq_resamp_qpsk = make_resampler_cc(QPSK_QUAD_RATE/quad_rate);
         unlock();
     }
-    demod_qpsk->set_input_rate(quad_rate);
 }
 
 void nbrx::set_audio_rate(float audio_rate)
@@ -243,8 +244,6 @@ void nbrx::set_demod(int rx_demod)
         disconnect(audio_rr, 0, gain_dsd, 0);
         disconnect(audio_rr_dsd, 0, self(), 0);
         disconnect(audio_rr_dsd, 0, self(), 1);
-        //disconnect(audio_rr_dsd, 0, float_to_char, 0);
-        //disconnect(float_to_char, 0, shout_streamer, 0);
         disconnect(dsd, 0, audio_rr_dsd, 0);
         disconnect(gain_dsd, 0, dsd, 0);
         connect(audio_rr,0 ,self(), 0);
@@ -302,8 +301,6 @@ void nbrx::set_demod(int rx_demod)
         connect(dsd, 0, audio_rr_dsd, 0);
         connect(audio_rr_dsd, 0, self(), 0);
         connect(audio_rr_dsd, 0, self(), 1);
-        //connect(audio_rr_dsd, 0, float_to_char, 0);
-        //connect(float_to_char, 0, shout_streamer, 0);
         break;
 
     default:
